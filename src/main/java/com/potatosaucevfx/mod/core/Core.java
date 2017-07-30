@@ -2,9 +2,15 @@ package com.potatosaucevfx.mod.core;
 
 import com.potatosaucevfx.mod.commands.CommandDisplayMessage;
 import com.potatosaucevfx.mod.utils.Log;
+import com.potatosaucevfx.mod.utils.WhitelistRead;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Created by PotatoSauceVFX on 7/27/2017.
@@ -16,6 +22,7 @@ public class Core {
     public static final String MODID = "wlsync";
     public static final String VERSION = "0.1";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
+    public static String SERVER_FILEPATH = "";
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
@@ -25,7 +32,11 @@ public class Core {
 
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
-        Log.logln("[Whitelist Sync] Loading Commands");
+        SERVER_FILEPATH = event.getServer().getDataDirectory().getAbsolutePath();
+        Log.logln("Loading Commands");
         event.registerServerCommand(new CommandDisplayMessage());
+        List<String> uuids;
+        uuids = WhitelistRead.getWhitelistUUIDs();
+        uuids.iterator().forEachRemaining(string -> Log.logln(string.toString()));
     }
 }
