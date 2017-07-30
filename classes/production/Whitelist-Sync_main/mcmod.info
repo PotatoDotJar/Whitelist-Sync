@@ -1,0 +1,16 @@
+[
+{
+  "modid": "wlsync",
+  "name": "Whitelist Sync",
+  "description": "Server Side Mod to Sync Whitelists to a mySQL Database.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["PotatoSauceVFX"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
