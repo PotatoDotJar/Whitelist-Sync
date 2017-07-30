@@ -1,6 +1,7 @@
 package com.potatosaucevfx.mod.core;
 
 import com.potatosaucevfx.mod.commands.CommandDisplayMessage;
+import com.potatosaucevfx.mod.utils.Log;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -18,12 +19,13 @@ public class Core {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
-        System.out.println("[Whitelist Sync] Hello Minecraft!!!");
+
+        Log.logln("[Whitelist Sync] Hello Minecraft!!!");
     }
 
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
-        System.out.println("[Whitelist Sync] Loading Commands");
+        Log.logln("[Whitelist Sync] Loading Commands");
         event.registerServerCommand(new CommandDisplayMessage());
     }
 }

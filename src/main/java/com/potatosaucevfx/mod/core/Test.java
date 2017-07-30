@@ -1,5 +1,6 @@
 package com.potatosaucevfx.mod.core;
 
+import com.potatosaucevfx.mod.utils.Log;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -14,8 +15,6 @@ import java.sql.*;
 public class Test {
 
     public static void main(String[] args) {
-
-
 
         /*
         Connection conn = null;
@@ -66,11 +65,12 @@ public class Test {
     public static void createNewDatabase(String dataBasePath) {
         String url = "jdbc:sqlite:" + dataBasePath;
 
-        try (Connection conn = DriverManager.getConnection(url)){
+        try {
+            Connection conn = DriverManager.getConnection(url);
             if(conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database \"" + dataBasePath +"\" has been created.");
+                Log.logln("The driver name is " + meta.getDriverName());
+                Log.logln("A new database \"" + dataBasePath +"\" has been created.");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());
