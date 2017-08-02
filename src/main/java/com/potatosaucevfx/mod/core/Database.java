@@ -7,16 +7,22 @@ import java.sql.*;
 
 public class Database {
 
+    private static String dataBasePath = "";
+
+
+    public Database(String dataBaseFilePath) {
+        this.dataBasePath = dataBaseFilePath;
+
+    }
+
     public static void setupDatabase() {
         Connection conn = null;
         // TODO: Rename DB File
-        String dataBasePath = "C:/sqlite/db/myDatabase.db";
-        File database = new File(dataBasePath);
+        File database = new File(dataBasePath + "/whitelist.db");
 
         if(!database.exists()) {
             createNewDatabase(dataBasePath);
         }
-
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:" + dataBasePath);
             System.out.println("Connected to Database successful!");
@@ -30,7 +36,7 @@ public class Database {
 
             Statement stmt = conn.createStatement();
             stmt.execute(sql);
-
+            /*
             sql = "SELECT * FROM whitelist;";
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -38,9 +44,10 @@ public class Database {
             while(rs.next()) {
                 System.out.println(rs.next());
             }
+            */
 
         } catch (SQLException e) {
-            System.err.println(e.getMessage());
+            Log.logln(e.getMessage());
         } finally {
             try {
                 if (conn != null) {
@@ -49,6 +56,20 @@ public class Database {
             } catch (SQLException ex) {
                 Log.logln(ex.getMessage());
             }
+        }
+    }
+
+    private static void createNewDatabase(String dataBasePath) {
+        String url = "jdbc:sqlite:" + dataBasePath;
+        try {
+            Connection conn = DriverManager.getConnection(url);
+            if(conn != null) {
+                DatabaseMetaData meta = conn.getMetaData();
+                Log.logln("The driver name is " + meta.getDriverName());
+                Log.logln("A new database \"" + dataBasePath +"\" has been created.");
+            }
+        } catch (SQLException e) {
+            Log.logln(e.getMessage());
         }
     }
 }
