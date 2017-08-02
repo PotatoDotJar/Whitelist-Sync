@@ -42,7 +42,7 @@ public class Database {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
         } finally {
-            try {-
+            try {
                 if (conn != null) {
                     conn.close();
                 }
