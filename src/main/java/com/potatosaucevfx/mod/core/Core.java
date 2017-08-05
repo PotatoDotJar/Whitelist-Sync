@@ -9,7 +9,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -28,6 +27,8 @@ public class Core {
     public void init(FMLInitializationEvent event) {
 
         Log.logln("[Whitelist Sync] Hello Minecraft!!!");
+        Database.setupDatabase();
+
     }
 
     @Mod.EventHandler
@@ -38,5 +39,12 @@ public class Core {
         List<String> uuids;
         uuids = WhitelistRead.getWhitelistUUIDs();
         uuids.iterator().forEachRemaining(string -> Log.logln(string.toString()));
+
+        // read the whitelist into a list of POJOs
+        WhitelistRead.getWhitelistUsers().forEach(user -> Log.logln(user.toString()));
+
+        // start a file watcher for the whitelist file. Possible use to automate whitelist changes.
+        Thread t = new Thread(new WhitelistWatcher());
+        t.start();
     }
 }
