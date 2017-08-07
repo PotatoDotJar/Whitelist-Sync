@@ -1,10 +1,8 @@
 package com.potatosaucevfx.mod.core;
 
-import com.potatosaucevfx.mod.commands.CommandDisplayMessage;
+import com.potatosaucevfx.mod.commands.CommandWhitelist;
 import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -35,11 +33,9 @@ public class Core {
     public void serverLoad(FMLServerStartingEvent event) {
         SERVER_FILEPATH = event.getServer().getDataDirectory().getAbsolutePath();
         Log.logln("Loading Commands");
-        event.registerServerCommand(new CommandDisplayMessage());
-        List<String> uuids;
-        uuids = WhitelistRead.getWhitelistUUIDs();
-        uuids.iterator().forEachRemaining(string -> Log.logln(string.toString()));
+        event.registerServerCommand(new CommandWhitelist());
 
+        // Print current whitelist
         // read the whitelist into a list of POJOs
         WhitelistRead.getWhitelistUsers().forEach(user -> Log.logln(user.toString()));
 

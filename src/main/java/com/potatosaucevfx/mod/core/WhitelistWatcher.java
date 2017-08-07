@@ -1,5 +1,7 @@
 package com.potatosaucevfx.mod.core;
 
+import com.potatosaucevfx.mod.utils.Log;
+
 import java.io.IOException;
 import java.nio.file.*;
 
@@ -39,8 +41,13 @@ public class WhitelistWatcher implements Runnable {
 
       for (WatchEvent<?> event : key.pollEvents()) {
         WatchEvent.Kind<?> kind = event.kind();
-        System.out.println(kind.toString());
-        System.out.println(event.context().toString());
+
+        // Test if whitelist is changed
+        if(event.context().toString().equalsIgnoreCase("whitelist.json")) {
+          Log.logln("Whitelist Updated...");
+        }
+        //System.out.println(kind.toString());
+        //System.out.println(event.context().toString());
       }
 
       // Reset the key -- this step is critical if you want to

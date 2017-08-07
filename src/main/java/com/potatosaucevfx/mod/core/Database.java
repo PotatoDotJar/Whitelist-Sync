@@ -60,7 +60,6 @@ public class Database {
             Connection conn = DriverManager.getConnection(url);
             if(conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                Log.logln("The driver name is " + meta.getDriverName());
                 Log.logln("A new database \"" + dataBasePath +"\" has been created.");
             }
         } catch (SQLException e) {
