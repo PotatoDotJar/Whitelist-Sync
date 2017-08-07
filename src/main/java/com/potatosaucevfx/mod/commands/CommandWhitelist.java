@@ -1,10 +1,13 @@
 package com.potatosaucevfx.mod.commands;
 
+import com.potatosaucevfx.mod.utils.Log;
+import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -41,14 +44,20 @@ public class CommandWhitelist implements ICommand {
         if(world.isRemote) {
             System.out.println("Mod does not process on client-side!");
         }
-        else if(args.equals("list")) {
-//            List<String> names
+        else {
+            if(args.length > 0) {
+                Log.logln(String.valueOf(args.length));
+                if (args[0].equalsIgnoreCase("list")) {
+                    WhitelistRead.getWhitelistUsers().forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
+                    Log.logln("List ran by " + sender.getName());
+                }
+            }
         }
     }
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return false;
+        return true;
     }
 
     @Override
