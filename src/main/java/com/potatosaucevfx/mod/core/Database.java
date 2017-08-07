@@ -1,24 +1,19 @@
 package com.potatosaucevfx.mod.core;
 
 import com.potatosaucevfx.mod.utils.Log;
+import net.minecraft.server.management.UserListWhitelistEntry;
 
 import java.io.File;
 import java.sql.*;
 
 public class Database {
 
-    private static String dataBasePath = "";
-
-
-    public Database(String dataBaseFilePath) {
-        this.dataBasePath = dataBaseFilePath;
-
-    }
+    public static String dataBasePath = "whitelist.db";
 
     public static void setupDatabase() {
         Connection conn = null;
         // TODO: Rename DB File
-        File database = new File(dataBasePath + "/whitelist.db");
+        File database = new File(dataBasePath);
 
         if(!database.exists()) {
             createNewDatabase(dataBasePath);

@@ -27,7 +27,7 @@ public class CommandWhitelist implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return a;
+        return "wl";
     }
 
     @Override
@@ -42,7 +42,7 @@ public class CommandWhitelist implements ICommand {
             System.out.println("Mod does not process on client-side!");
         }
         else if(args.equals("list")) {
-            List<String> names
+//            List<String> names
         }
     }
 
