@@ -1,7 +1,9 @@
 package com.potatosaucevfx.mod.commands;
 
+import com.mojang.authlib.GameProfile;
 import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -12,6 +14,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class CommandWhitelist implements ICommand {
@@ -48,8 +51,30 @@ public class CommandWhitelist implements ICommand {
             if(args.length > 0) {
                 Log.logln(String.valueOf(args.length));
                 if (args[0].equalsIgnoreCase("list")) {
-                    WhitelistRead.getWhitelistUsers().forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
+                    WhitelistRead.getWhitelistNames().forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
                     Log.logln("List ran by " + sender.getName());
+                }
+                else if (args[0].equalsIgnoreCase("add")) {
+                    if(args.length > 1) {
+                        server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
+                        sender.addChatMessage(new TextComponentString(args[1] + " added to the whitelist."));
+                    }
+                    else {
+                        sender.addChatMessage(new TextComponentString("You must specify a name to add to the whitelist!"));
+                    }
+                }
+                else if (args[0].equalsIgnoreCase("remove")) {
+                    if(args.length > 1) {
+                        GameProfile gameprofile = server.getPlayerList().getWhitelistedPlayers().getByName(args[1]);
+                        if(gameprofile != null) {
+                            server.getPlayerList().removePlayerFromWhitelist(gameprofile);
+                            sender.addChatMessage(new TextComponentString(args[1] + " removed from the whitelist."));
+
+                        }
+                        else {
+                            sender.addChatMessage(new TextComponentString("You must specify a valid name to remove from the whitelist!"));
+                        }
+                    }
                 }
             }
         }
@@ -62,7 +87,20 @@ public class CommandWhitelist implements ICommand {
 
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
-        return null;
+        if (args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, new String[]{"list", "add", "remove"});
+        } else {
+            if (args.length == 2) {
+                if ("remove".equals(args[0])) {
+                    return CommandBase.getListOfStringsMatchingLastWord(args, server.getPlayerList().getWhitelistedPlayerNames());
+                }
+
+                if ("add".equals(args[0])) {
+                    return CommandBase.getListOfStringsMatchingLastWord(args, server.getPlayerProfileCache().getUsernames());
+                }
+            }
+            return Collections.emptyList();
+        }
     }
 
     @Override
