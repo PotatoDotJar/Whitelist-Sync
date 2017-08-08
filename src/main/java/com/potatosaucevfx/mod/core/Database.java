@@ -1,5 +1,6 @@
 package com.potatosaucevfx.mod.core;
 
+import com.mojang.authlib.GameProfile;
 import com.potatosaucevfx.mod.utils.Log;
 import net.minecraft.server.management.UserListWhitelistEntry;
 
@@ -52,6 +53,10 @@ public class Database {
                 Log.logln(ex.getMessage());
             }
         }
+    }
+
+    public static void addPlayertoDataBase(GameProfile player) {
+
     }
 
     private static void createNewDatabase(String dataBasePath) {

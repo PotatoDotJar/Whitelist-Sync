@@ -41,6 +41,16 @@ public class CommandWhitelist implements ICommand {
         return aliases;
     }
 
+
+    // TODO: ADD DATABASE UPDATES
+
+    /*
+    NOTES:
+    isWhitelisted(Gameprofile) checks if the profile is whitelisted.
+
+
+     */
+
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         World world = sender.getEntityWorld();

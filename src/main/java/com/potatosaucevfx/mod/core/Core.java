@@ -1,17 +1,23 @@
 package com.potatosaucevfx.mod.core;
 
 import com.potatosaucevfx.mod.commands.CommandWhitelist;
+import com.potatosaucevfx.mod.utils.ConfigHandler;
 import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * Created by PotatoSauceVFX on 7/27/2017.
  */
+
+// TODO: ADD CONFIG INTEGRATION
 
 @Mod(modid = Core.MODID, version = Core.VERSION, acceptableRemoteVersions = "*", serverSideOnly = true)
 public class Core {
@@ -20,6 +26,16 @@ public class Core {
     public static final String VERSION = "0.1";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
     public static String SERVER_FILEPATH = "";
+    public static Configuration config;
+
+    @Mod.EventHandler
+    public void preInit(FMLPreInitializationEvent e) {
+        File directory = e.getModConfigurationDirectory();
+        config = new Configuration(new File(directory.getPath(), MODID + ".cfg"));
+        ConfigHandler.readConfig();
+    }
+
+
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
