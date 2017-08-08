@@ -6,7 +6,9 @@ import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
@@ -17,8 +19,6 @@ import java.util.List;
  * Created by PotatoSauceVFX on 7/27/2017.
  */
 
-// TODO: ADD CONFIG INTEGRATION
-
 @Mod(modid = Core.MODID, version = Core.VERSION, acceptableRemoteVersions = "*", serverSideOnly = true)
 public class Core {
 
@@ -28,7 +28,7 @@ public class Core {
     public static String SERVER_FILEPATH = "";
     public static Configuration config;
 
-    @Mod.EventHandler
+    @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         File directory = e.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), MODID + ".cfg"));
@@ -37,7 +37,7 @@ public class Core {
 
 
 
-    @Mod.EventHandler
+    @EventHandler
     public void init(FMLInitializationEvent event) {
 
         Log.logln("[Whitelist Sync] Hello Minecraft!!!");
@@ -45,7 +45,7 @@ public class Core {
 
     }
 
-    @Mod.EventHandler
+    @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         SERVER_FILEPATH = event.getServer().getDataDirectory().getAbsolutePath();
         Log.logln("Loading Commands");
@@ -53,10 +53,17 @@ public class Core {
 
         // Print current whitelist
         // read the whitelist into a list of POJOs
-        WhitelistRead.getWhitelistUsers().forEach(user -> Log.logln(user.toString()));
+        //WhitelistRead.getWhitelistUsers().forEach(user -> Log.logln(user.toString()));
 
         // start a file watcher for the whitelist file. Possible use to automate whitelist changes.
         Thread t = new Thread(new WhitelistWatcher());
         t.start();
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent e) {
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 }

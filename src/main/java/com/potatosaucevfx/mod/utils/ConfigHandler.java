@@ -7,7 +7,7 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 public class ConfigHandler {
 
-    public static String databasePath = "/";
+    public static String databasePath = "./whitelist.db";
 
     public static void readConfig() {
         Configuration cfg = Core.config;
@@ -26,7 +26,7 @@ public class ConfigHandler {
     private static void initGeneralConfig(Configuration cfg) {
         cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
         // cfg.getBoolean() will get the value in the config if it is already specified there. If not it will create the value.
-        databasePath = cfg.getString("goodTutorial", CATEGORY_GENERAL, databasePath, "Insert System Path for your main database file. " +
+        databasePath = cfg.getString("Database Path", CATEGORY_GENERAL, databasePath, "Insert System Path for your main database file. " +
                 "This will be the same for all your servers you want to sync!");
     }
 

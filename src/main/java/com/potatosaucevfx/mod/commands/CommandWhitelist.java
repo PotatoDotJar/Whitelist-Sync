@@ -1,6 +1,8 @@
 package com.potatosaucevfx.mod.commands;
 
 import com.mojang.authlib.GameProfile;
+import com.potatosaucevfx.mod.core.Database;
+import com.potatosaucevfx.mod.utils.ConfigHandler;
 import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraft.command.CommandBase;
@@ -60,10 +62,12 @@ public class CommandWhitelist implements ICommand {
         else {
             if(args.length > 0) {
                 Log.logln(String.valueOf(args.length));
+                //Action for showing list
                 if (args[0].equalsIgnoreCase("list")) {
                     WhitelistRead.getWhitelistNames().forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
                     Log.logln("List ran by " + sender.getName());
                 }
+                // Actions for adding a player to whitelist
                 else if (args[0].equalsIgnoreCase("add")) {
                     if(args.length > 1) {
                         server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
@@ -73,6 +77,7 @@ public class CommandWhitelist implements ICommand {
                         sender.addChatMessage(new TextComponentString("You must specify a name to add to the whitelist!"));
                     }
                 }
+                // Actions for removing player from whitelist
                 else if (args[0].equalsIgnoreCase("remove")) {
                     if(args.length > 1) {
                         GameProfile gameprofile = server.getPlayerList().getWhitelistedPlayers().getByName(args[1]);
@@ -86,6 +91,19 @@ public class CommandWhitelist implements ICommand {
                         }
                     }
                 }
+                //Pushes whitelist.jsom to database
+                else if (args[0].equalsIgnoreCase("pushtodatabase")) {
+                    Database.pushLocalToDatabase(server);
+                }
+                // Reloads the config
+                else if (args[0].equalsIgnoreCase("reloadConfig")) {
+                    ConfigHandler.readConfig();
+                }
+                // Pulls database to whitelist.json
+                else if (args[0].equalsIgnoreCase("pullfromdatabase")) {
+                    Database.pullUuidsFromDatabaseToLocal(server).iterator().forEachRemaining(uuids -> sender.addChatMessage(new TextComponentString(uuids)));
+                }
+
             }
         }
     }
@@ -98,7 +116,7 @@ public class CommandWhitelist implements ICommand {
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, new String[]{"list", "add", "remove"});
+            return CommandBase.getListOfStringsMatchingLastWord(args, new String[]{"list", "add", "remove", "reloadConfig", "pushtodatabase", "pullfromdatabase"});
         } else {
             if (args.length == 2) {
                 if ("remove".equals(args[0])) {
