@@ -10,7 +10,6 @@ import net.minecraft.server.management.UserListWhitelistEntry;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 public class Database {
@@ -51,8 +50,8 @@ public class Database {
 
     // Writes data from local whitelist to database.
     public static void pushLocalToDatabase(MinecraftServer server) {
-        List<String> uuids = WhitelistRead.getWhitelistUUIDs();
-        List<String> names = WhitelistRead.getWhitelistNames();
+        ArrayList<String> uuids = WhitelistRead.getWhitelistUUIDs();
+        ArrayList<String> names = WhitelistRead.getWhitelistNames();
 
         new Thread(new Runnable() {
             @Override
@@ -84,11 +83,9 @@ public class Database {
             }
         }).start();
     }
-    public static List<String> pullUuidsFromDatabaseToLocal(MinecraftServer server) {
-        List<String> uuids = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+    public static ArrayList<String> pullUuidsFromDatabase(MinecraftServer server) {
+        ArrayList<String> uuids = new ArrayList<String>();
+
                 try {
                     int records = 0;
                     Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
@@ -101,19 +98,13 @@ public class Database {
                     ResultSet rs = stmt.executeQuery(sql);
 
                     while(rs.next()) {
-
-
                         if(rs.getInt("whitelisted") == 1) {
                             uuids.add(rs.getString("uuid"));
                         }
-                        //if(!server.getPlayerList().getWhitelistedPlayers().isWhitelisted(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString(rs.getRow()))))) {
-                        //server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString(rs.getRow()))));
-
-                        //}
                         records++;
                     }
                     long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
 
                     rs = null;
                     stmt.close();
@@ -121,19 +112,12 @@ public class Database {
                 } catch (SQLException e) {
                     Log.logln(e.getMessage());
                 }
-            }
-        }).start();
-
-
         return uuids;
 
     }
 
-    public static List<String> pullNamesFromDatabaseToLocal(MinecraftServer server) {
-        List<String> names = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+    public static ArrayList<String> pullNamesFromDatabase(MinecraftServer server) {
+        ArrayList<String> names = new ArrayList<String>();
                 try {
                     int records = 0;
                     Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
@@ -155,7 +139,7 @@ public class Database {
                     }
 
                     long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
 
                     rs = null;
                     stmt.close();
@@ -163,10 +147,6 @@ public class Database {
                 } catch (SQLException e) {
                     Log.logln(e.getMessage());
                 }
-            }
-        }).start();
-
-
         return names;
 
     }
@@ -197,7 +177,7 @@ public class Database {
         }).start();
     }
 
-    public static void removePlayertoDataBase(GameProfile player) {
+    public static void removePlayerFromDataBase(GameProfile player) {
         new Thread(new Runnable() {
             @Override
             public void run() {

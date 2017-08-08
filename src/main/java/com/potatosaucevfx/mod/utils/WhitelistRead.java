@@ -17,20 +17,20 @@ public class WhitelistRead {
 
   private static JSONParser parser = new JSONParser();
 
-  public static List getWhitelistUUIDs() {
-    List<String> uuids = new ArrayList<String>();
+  public static ArrayList getWhitelistUUIDs() {
+    ArrayList<String> uuids = new ArrayList<String>();
     getWhitelistJson().forEach(emp -> parseToList((JSONObject) emp, uuids, "uuid"));
     return uuids;
   }
 
-  public static List getWhitelistNames() {
-    List<String> names = new ArrayList<String>();
+  public static ArrayList getWhitelistNames() {
+    ArrayList<String> names = new ArrayList<String>();
     getWhitelistJson().forEach(emp -> parseToList((JSONObject) emp, names, "name"));
     return names;
   }
 
-  public static List<WhitelistUser> getWhitelistUsers() {
-    List<WhitelistUser> users = new ArrayList<>();
+  public static ArrayList<WhitelistUser> getWhitelistUsers() {
+    ArrayList<WhitelistUser> users = new ArrayList<>();
     getWhitelistJson().forEach((user) -> {
       String uuid = ((JSONObject) user).get("uuid").toString();
       String name = ((JSONObject) user).get("name").toString();

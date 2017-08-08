@@ -3,7 +3,6 @@ package com.potatosaucevfx.mod.core;
 import com.potatosaucevfx.mod.commands.CommandWhitelist;
 import com.potatosaucevfx.mod.utils.ConfigHandler;
 import com.potatosaucevfx.mod.utils.Log;
-import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -13,7 +12,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 
 import java.io.File;
-import java.util.List;
 
 /**
  * Created by PotatoSauceVFX on 7/27/2017.

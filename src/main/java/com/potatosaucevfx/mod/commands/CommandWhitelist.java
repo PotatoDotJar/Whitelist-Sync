@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CommandWhitelist implements ICommand {
 
-    private final List aliases;
+    private final ArrayList aliases;
 
     public CommandWhitelist() {
         aliases = new ArrayList();
@@ -57,20 +57,20 @@ public class CommandWhitelist implements ICommand {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         World world = sender.getEntityWorld();
         if(world.isRemote) {
-            System.out.println("Mod does not process on client-side!");
+            Log.logln("Mod does not process on client-side!");
         }
         else {
             if(args.length > 0) {
                 Log.logln(String.valueOf(args.length));
                 //Action for showing list
                 if (args[0].equalsIgnoreCase("list")) {
-                    WhitelistRead.getWhitelistNames().forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
-                    Log.logln("List ran by " + sender.getName());
+                    Database.pullNamesFromDatabase(server).forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
                 }
                 // Actions for adding a player to whitelist
                 else if (args[0].equalsIgnoreCase("add")) {
                     if(args.length > 1) {
                         server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
+                        Database.addPlayertoDataBase(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
                         sender.addChatMessage(new TextComponentString(args[1] + " added to the whitelist."));
                     }
                     else {
@@ -83,6 +83,7 @@ public class CommandWhitelist implements ICommand {
                         GameProfile gameprofile = server.getPlayerList().getWhitelistedPlayers().getByName(args[1]);
                         if(gameprofile != null) {
                             server.getPlayerList().removePlayerFromWhitelist(gameprofile);
+                            Database.removePlayerFromDataBase(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
                             sender.addChatMessage(new TextComponentString(args[1] + " removed from the whitelist."));
 
                         }
@@ -91,19 +92,13 @@ public class CommandWhitelist implements ICommand {
                         }
                     }
                 }
-                //Pushes whitelist.jsom to database
-                else if (args[0].equalsIgnoreCase("pushtodatabase")) {
-                    Database.pushLocalToDatabase(server);
-                }
                 // Reloads the config
                 else if (args[0].equalsIgnoreCase("reloadConfig")) {
                     ConfigHandler.readConfig();
                 }
-                // Pulls database to whitelist.json
-                else if (args[0].equalsIgnoreCase("pullfromdatabase")) {
-                    Database.pullUuidsFromDatabaseToLocal(server).iterator().forEachRemaining(uuids -> sender.addChatMessage(new TextComponentString(uuids)));
-                }
-
+            }
+            else {
+                sender.addChatMessage(new TextComponentString("You must provide parameters!"));
             }
         }
     }
