@@ -74,6 +74,7 @@ public class Database {
 
                     Log.logln("Database Updated | Took " + timeTaken + "ms | Wrote " + records + " records.");
 
+
                     stmt.close();
                     conn.close();
                 } catch (SQLException e) {
@@ -92,7 +93,7 @@ public class Database {
                     int records = 0;
                     Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
                     Statement stmt = conn.createStatement();
-                    String sql = "SELECT uuid FROM whitelist;";
+                    String sql = "SELECT uuid, whitelisted FROM whitelist;";
 
                     long startTime = System.currentTimeMillis();
 
@@ -100,7 +101,11 @@ public class Database {
                     ResultSet rs = stmt.executeQuery(sql);
 
                     while(rs.next()) {
-                        uuids.add(rs.getString("uuid"));
+
+
+                        if(rs.getInt("whitelisted") == 1) {
+                            uuids.add(rs.getString("uuid"));
+                        }
                         //if(!server.getPlayerList().getWhitelistedPlayers().isWhitelisted(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString(rs.getRow()))))) {
                         //server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString(rs.getRow()))));
 
@@ -110,6 +115,7 @@ public class Database {
                     long timeTaken = System.currentTimeMillis() - startTime;
                     Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
 
+                    rs = null;
                     stmt.close();
                     conn.close();
                 } catch (SQLException e) {
@@ -123,9 +129,138 @@ public class Database {
 
     }
 
+    public static List<String> pullNamesFromDatabaseToLocal(MinecraftServer server) {
+        List<String> names = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int records = 0;
+                    Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
+                    Statement stmt = conn.createStatement();
+                    String sql = "SELECT name, whitelisted FROM whitelist;";
+
+                    long startTime = System.currentTimeMillis();
+
+                    stmt.execute(sql);
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    while(rs.next()) {
+
+                        if(rs.getInt("whitelisted") == 1) {
+                            names.add(rs.getString("name"));
+                        }
+
+                        records++;
+                    }
+
+                    long timeTaken = System.currentTimeMillis() - startTime;
+                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+
+                    rs = null;
+                    stmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    Log.logln(e.getMessage());
+                }
+            }
+        }).start();
+
+
+        return names;
+
+    }
+
 
     public static void addPlayertoDataBase(GameProfile player) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
+                    Statement stmt = conn.createStatement();
+                    String sql = "INSERT OR REPLACE INTO whitelist(uuid, name, whitelisted) VALUES (\'" + player.getId() + "\', \'" + player.getName() + "\', 1);";
 
+                    long startTime = System.currentTimeMillis();
+
+                    stmt.execute(sql);
+
+                    long timeTaken = System.currentTimeMillis() - startTime;
+                    Log.logln("Database Removed " + player.getName() + " | Took " + timeTaken + "ms");
+
+                    stmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    Log.logln(e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    public static void removePlayertoDataBase(GameProfile player) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
+                    Statement stmt = conn.createStatement();
+                    String sql = "INSERT OR REPLACE INTO whitelist(uuid, name, whitelisted) VALUES (\'" + player.getId() + "\', \'" + player.getName() + "\', 0);";
+
+                    long startTime = System.currentTimeMillis();
+
+                    stmt.execute(sql);
+
+                    long timeTaken = System.currentTimeMillis() - startTime;
+                    Log.logln("Database Removed " + player.getName() + " | Took " + timeTaken + "ms");
+
+                    stmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    Log.logln(e.getMessage());
+                }
+            }
+        }).start();
+    }
+
+    public static void updateLocalWithDatabase(MinecraftServer server) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int records = 0;
+                    Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
+                    Statement stmt = conn.createStatement();
+                    String sql = "SELECT name, uuid, whitelisted FROM whitelist;";
+
+                    long startTime = System.currentTimeMillis();
+
+                    stmt.execute(sql);
+                    ResultSet rs = stmt.executeQuery(sql);
+
+                    while(rs.next()) {
+                        if(rs.getInt("whitelisted") == 1) {
+                            if(!server.getPlayerList().getWhitelistedPlayers().isWhitelisted(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))))) {
+                                server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))));
+                            }
+                        }
+                        else {
+                            if(server.getPlayerList().getWhitelistedPlayers().isWhitelisted(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))))) {
+                                server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))));
+                            }
+                        }
+                        records++;
+                    }
+                    long timeTaken = System.currentTimeMillis() - startTime;
+                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+
+                    rs = null;
+                    stmt.close();
+                    conn.close();
+                } catch (SQLException e) {
+                    Log.logln(e.getMessage());
+                }
+            }
+        }).start();
     }
 
     private static void createNewDatabase() {
