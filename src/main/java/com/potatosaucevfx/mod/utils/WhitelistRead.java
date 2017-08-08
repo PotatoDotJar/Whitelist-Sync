@@ -30,7 +30,7 @@ public class WhitelistRead {
   }
 
   public static ArrayList<WhitelistUser> getWhitelistUsers() {
-    ArrayList<WhitelistUser> users = new ArrayList<>();
+    ArrayList<WhitelistUser> users = new ArrayList<WhitelistUser>();
     getWhitelistJson().forEach((user) -> {
       String uuid = ((JSONObject) user).get("uuid").toString();
       String name = ((JSONObject) user).get("name").toString();

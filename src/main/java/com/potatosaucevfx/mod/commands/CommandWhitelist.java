@@ -61,7 +61,6 @@ public class CommandWhitelist implements ICommand {
         }
         else {
             if(args.length > 0) {
-                Log.logln(String.valueOf(args.length));
                 //Action for showing list
                 if (args[0].equalsIgnoreCase("list")) {
                     Database.pullNamesFromDatabase(server).forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
@@ -83,7 +82,7 @@ public class CommandWhitelist implements ICommand {
                         GameProfile gameprofile = server.getPlayerList().getWhitelistedPlayers().getByName(args[1]);
                         if(gameprofile != null) {
                             server.getPlayerList().removePlayerFromWhitelist(gameprofile);
-                            Database.removePlayerFromDataBase(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
+                            Database.removePlayerFromDataBase(gameprofile);
                             sender.addChatMessage(new TextComponentString(args[1] + " removed from the whitelist."));
 
                         }
@@ -95,6 +94,15 @@ public class CommandWhitelist implements ICommand {
                 // Reloads the config
                 else if (args[0].equalsIgnoreCase("reloadConfig")) {
                     ConfigHandler.readConfig();
+                }
+                // Sync Database to server
+                else if (args[0].equalsIgnoreCase("sync")) {
+                    Database.updateLocalWithDatabase(server);
+                }
+
+                // Sync server to database
+                else if (args[0].equalsIgnoreCase("copyservertodatabase")) {
+                    Database.pushLocalToDatabase(server);
                 }
             }
             else {
@@ -111,7 +119,7 @@ public class CommandWhitelist implements ICommand {
     @Override
     public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
-            return CommandBase.getListOfStringsMatchingLastWord(args, new String[]{"list", "add", "remove", "reloadConfig", "pushtodatabase", "pullfromdatabase"});
+            return CommandBase.getListOfStringsMatchingLastWord(args, "list", "add", "remove", "reloadConfig", "sync", "copyServerToDatabase");
         } else {
             if (args.length == 2) {
                 if ("remove".equals(args[0])) {

@@ -46,8 +46,17 @@ public class Core {
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         SERVER_FILEPATH = event.getServer().getDataDirectory().getAbsolutePath();
+        Log.logln("------------------------------------------------");
+        Log.logln("------------------------------------------------");
+        Log.logln("------------------------------------------------");
         Log.logln("Loading Commands");
         event.registerServerCommand(new CommandWhitelist());
+        Database.updateLocalWithDatabase(event.getServer());
+
+        if(!event.getServer().getPlayerList().isWhiteListEnabled()) {
+            event.getServer().getPlayerList().setWhiteListEnabled(true);
+            Log.logln("Whitelist not enabled, doing it for you! ;)");
+        }
 
         // Print current whitelist
         // read the whitelist into a list of POJOs
@@ -56,6 +65,9 @@ public class Core {
         // start a file watcher for the whitelist file. Possible use to automate whitelist changes.
         Thread t = new Thread(new WhitelistWatcher());
         t.start();
+        Log.logln("------------------------------------------------");
+        Log.logln("------------------------------------------------");
+        Log.logln("------------------------------------------------");
     }
 
     @EventHandler
