@@ -8,6 +8,7 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 public class ConfigHandler {
 
     public static String databasePath = "./whitelist.db";
+    public static int serverSyncTimer = 60;
 
     public static void readConfig() {
         Configuration cfg = Core.config;
@@ -28,6 +29,9 @@ public class ConfigHandler {
         // cfg.getBoolean() will get the value in the config if it is already specified there. If not it will create the value.
         databasePath = cfg.getString("Database Path", CATEGORY_GENERAL, databasePath, "Insert System Path for your main database file. " +
                 "This will be the same for all your servers you want to sync!");
+        serverSyncTimer = cfg.getInt("Sync Timer", CATEGORY_GENERAL, serverSyncTimer, 5,  1000, "Time Interval in seconds for when the server polls " +
+                "the whitelist changes from the database.");
+
     }
 
 }

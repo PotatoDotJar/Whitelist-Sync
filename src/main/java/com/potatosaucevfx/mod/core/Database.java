@@ -202,52 +202,59 @@ public class Database {
     }
 
     public static void updateLocalWithDatabase(MinecraftServer server) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int records = 0;
+                    Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
+                    Statement stmt = conn.createStatement();
+                    String sql = "SELECT name, uuid, whitelisted FROM whitelist;";
 
-        try {
-            int records = 0;
-            Connection conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
-            Statement stmt = conn.createStatement();
-            String sql = "SELECT name, uuid, whitelisted FROM whitelist;";
+                    long startTime = System.currentTimeMillis();
 
-            long startTime = System.currentTimeMillis();
+                    stmt.execute(sql);
+                    ResultSet rs = stmt.executeQuery(sql);
 
-            stmt.execute(sql);
-            ResultSet rs = stmt.executeQuery(sql);
+                    ArrayList<String> localUuids = WhitelistRead.getWhitelistUUIDs();
+                    while (rs.next()) {
+                        GameProfile player = new GameProfile(UUID.fromString(rs.getString("uuid")), rs.getString("name"));
 
-            ArrayList<String> localUuids = WhitelistRead.getWhitelistUUIDs();
+                        if (rs.getInt("whitelisted") == 1) {
+                            if (!localUuids.contains(rs.getString("uuid"))) {
+                                try {
+                                    server.getPlayerList().addWhitelistedPlayer(player);
 
-            while (rs.next()) {
+                                } catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        } else {
+                            Log.logln(rs.getString("uuid") + " is NOT whitelisted.");
+                            if (localUuids.contains(rs.getString("uuid"))) {
+                                server.getPlayerList().removePlayerFromWhitelist(player);
 
-                if(rs.getString("uuid") != null) {
-                    if (rs.getInt("whitelisted") == 1) {
-                        if (!localUuids.contains(rs.getString("uuid"))) {
-                            try {
-                                server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))));
-                            } catch (NullPointerException e) {
-                                e.printStackTrace();
-                                rs.getString("uuid");
+                                Log.logln("Removed player " + rs.getString("name"));
                             }
                         }
-                    } else {
-                        Log.logln(rs.getString("uuid") + " is NOT whitelisted.");
-                        if (localUuids.contains(rs.getString("uuid"))) {
-                            server.getPlayerList().removePlayerFromWhitelist(server.getPlayerProfileCache().getProfileByUUID(UUID.fromString(rs.getString("uuid"))));
-                            Log.logln("Removed player " + rs.getString("name"));
-                        }
+
+                        records++;
                     }
+                    long timeTaken = System.currentTimeMillis() - startTime;
+                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+                    Log.logln("Local whitelist.json up to date!");
+
+                    rs = null;
+                    stmt.close();
+                    conn.close();
+                } catch(SQLException e){
+                    Log.logln(e.getMessage());
                 }
-                records++;
             }
-            long timeTaken = System.currentTimeMillis() - startTime;
-            Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+        }).start();
 
-            rs = null;
-            stmt.close();
-            conn.close();
 
-        } catch(SQLException e){
-            Log.logln(e.getMessage());
-        }
+
     }
 
 

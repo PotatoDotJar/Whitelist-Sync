@@ -21,7 +21,7 @@ import java.io.File;
 public class Core {
 
     public static final String MODID = "wlsync";
-    public static final String VERSION = "0.9";
+    public static final String VERSION = "1.0";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
     public static String SERVER_FILEPATH = "";
     public static Configuration config;
@@ -58,12 +58,8 @@ public class Core {
             Log.logln("Whitelist not enabled, doing it for you! ;)");
         }
 
-        // Print current whitelist
-        // read the whitelist into a list of POJOs
-        //WhitelistRead.getWhitelistUsers().forEach(user -> Log.logln(user.toString()));
-
-        // start a file watcher for the whitelist file. Possible use to automate whitelist changes.
-        Thread t = new Thread(new WhitelistWatcher());
+        // Thread to update local files with database.
+        Thread t = new Thread(new WhitelistWatcher(event.getServer()));
         t.start();
         Log.logln("------------------------------------------------");
         Log.logln("------------------------------------------------");

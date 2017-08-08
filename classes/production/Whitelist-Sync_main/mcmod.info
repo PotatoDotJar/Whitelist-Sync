@@ -5,12 +5,12 @@
   "description": "Server Side Mod to Sync Whitelists to a mySQL Database.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["PotatoSauceVFX"],
+  "url": "https://github.com/PotatoSauceVFX/Whitelist-Sync",
+  "updateUrl": "https://github.com/PotatoSauceVFX/Whitelist-Sync",
+  "authorList": ["PotatoSauceVFX", "peteley"],
   "credits": "",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": ["json-simple-1.1.1", "sqlite-jdbc-3.19.3"]
 }
 ]

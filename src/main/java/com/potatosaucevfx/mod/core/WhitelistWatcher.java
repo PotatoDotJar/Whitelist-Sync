@@ -1,6 +1,8 @@
 package com.potatosaucevfx.mod.core;
 
+import com.potatosaucevfx.mod.utils.ConfigHandler;
 import com.potatosaucevfx.mod.utils.Log;
+import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -12,8 +14,10 @@ public class WhitelistWatcher implements Runnable {
 
   private FileSystem fileSystem;
   private WatchService watcher;
+  private MinecraftServer server;
 
-  public WhitelistWatcher() {
+  public WhitelistWatcher(MinecraftServer server) {
+    this.server = server;
     try {
       this.fileSystem = FileSystems.getDefault();
       this.watcher = fileSystem.newWatchService();
@@ -24,6 +28,22 @@ public class WhitelistWatcher implements Runnable {
 
   @Override
   public void run() {
+    while(server.isServerRunning()) {
+      try {
+        long timeMillis = (ConfigHandler.serverSyncTimer)*1000;
+        Database.updateLocalWithDatabase(server);
+
+        Thread.sleep(timeMillis);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
+
+
+
+
+  }
+    /*
     Path whitelist = fileSystem.getPath("./");
     try {
       whitelist.register(watcher, ENTRY_MODIFY);
@@ -59,5 +79,6 @@ public class WhitelistWatcher implements Runnable {
       }
     }
   }
+  */
 
 }
