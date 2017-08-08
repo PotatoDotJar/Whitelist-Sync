@@ -5,7 +5,6 @@ import com.potatosaucevfx.mod.utils.ConfigHandler;
 import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.UserListWhitelistEntry;
 
 import java.io.File;
 import java.sql.*;
