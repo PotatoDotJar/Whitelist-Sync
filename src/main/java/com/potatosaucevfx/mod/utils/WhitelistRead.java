@@ -48,9 +48,8 @@ public class WhitelistRead {
     try {
       whitelist = (JSONArray) parser.parse(new FileReader(Core.SERVER_FILEPATH + "/whitelist.json"));
     } catch (FileNotFoundException e) {
-      e.printStackTrace();
+        Core.logger.info("Whitelist.json is empty! :O");
     } catch (ParseException e) {
-      Log.logln("Whitelist.json is empty! :O");
       //e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

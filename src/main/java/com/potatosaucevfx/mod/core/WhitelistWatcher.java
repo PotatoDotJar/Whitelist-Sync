@@ -1,7 +1,6 @@
 package com.potatosaucevfx.mod.core;
 
 import com.potatosaucevfx.mod.utils.ConfigHandler;
-import com.potatosaucevfx.mod.utils.Log;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class WhitelistWatcher implements Runnable {
           this.fileSystem = FileSystems.getDefault();
           this.watcher = fileSystem.newWatchService();
 
-          Path dataBasePath = fileSystem.getPath(ConfigHandler.databasePath);
+          Path dataBasePath = fileSystem.getPath(ConfigHandler.databasePath.replace("whitelist.db", ""));
           dataBasePath.register(watcher, ENTRY_MODIFY);
 
         } catch (IOException e) {
@@ -64,7 +63,7 @@ public class WhitelistWatcher implements Runnable {
 
             // Test if whitelist is changed
             if(event.context().toString().equalsIgnoreCase("whitelist.db")) {
-              Log.logln("Remote Database Updated... Syncing...");
+              Core.logger.debug("Remote Database Updated... Syncing...");
               Database.updateLocalWithDatabase(server);
             }
           }

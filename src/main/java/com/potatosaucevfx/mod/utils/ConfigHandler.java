@@ -18,7 +18,7 @@ public class ConfigHandler {
             cfg.load();
             initGeneralConfig(cfg);
         } catch (Exception e1) {
-            Log.logln("Problem loading config file!");
+            Core.logger.error("Problem loading config file!");
         } finally {
             if (cfg.hasChanged()) {
                 cfg.save();

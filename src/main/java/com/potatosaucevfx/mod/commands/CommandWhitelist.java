@@ -1,10 +1,9 @@
 package com.potatosaucevfx.mod.commands;
 
 import com.mojang.authlib.GameProfile;
+import com.potatosaucevfx.mod.core.Core;
 import com.potatosaucevfx.mod.core.Database;
 import com.potatosaucevfx.mod.utils.ConfigHandler;
-import com.potatosaucevfx.mod.utils.Log;
-import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -58,7 +57,7 @@ public class CommandWhitelist implements ICommand {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         World world = sender.getEntityWorld();
         if(world.isRemote) {
-            Log.logln("Mod does not process on client-side!");
+            Core.logger.error("I don't process on client-side!");
         }
         else {
             if(args.length > 0) {

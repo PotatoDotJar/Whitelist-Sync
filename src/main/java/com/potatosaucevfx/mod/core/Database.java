@@ -2,7 +2,6 @@ package com.potatosaucevfx.mod.core;
 
 import com.mojang.authlib.GameProfile;
 import com.potatosaucevfx.mod.utils.ConfigHandler;
-import com.potatosaucevfx.mod.utils.Log;
 import com.potatosaucevfx.mod.utils.WhitelistRead;
 import net.minecraft.server.MinecraftServer;
 
@@ -22,7 +21,7 @@ public class Database {
         }
         try {
             conn = DriverManager.getConnection("jdbc:sqlite:" + ConfigHandler.databasePath);
-            System.out.println("Connected to Database successfully!");
+            Core.logger.info("Connected to Database successfully!");
 
             // SQL statement for creating a new table
             String sql = "CREATE TABLE IF NOT EXISTS whitelist (\n"
@@ -34,14 +33,14 @@ public class Database {
             stmt.execute(sql);
 
         } catch (SQLException e) {
-            Log.logln(e.getMessage());
+            Core.logger.error(e.getMessage());
         } finally {
             try {
                 if (conn != null) {
                     conn.close();
                 }
             } catch (SQLException ex) {
-                Log.logln(ex.getMessage());
+                Core.logger.error(ex.getMessage());
             }
         }
     }
@@ -70,13 +69,13 @@ public class Database {
                     }
                     long timeTaken = System.currentTimeMillis() - startTime;
 
-                    Log.logln("Database Updated | Took " + timeTaken + "ms | Wrote " + records + " records.");
+                    Core.logger.debug("Database Updated | Took " + timeTaken + "ms | Wrote " + records + " records.");
 
 
                     stmt.close();
                     conn.close();
                 } catch (SQLException e) {
-                    Log.logln(e.getMessage());
+                    Core.logger.error(e.getMessage());
 
                 }
             }
@@ -103,13 +102,13 @@ public class Database {
                 records++;
             }
             long timeTaken = System.currentTimeMillis() - startTime;
-            Log.logln("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
+            Core.logger.debug("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
 
             rs = null;
             stmt.close();
             conn.close();
         } catch (SQLException e) {
-            Log.logln(e.getMessage());
+            Core.logger.error(e.getMessage());
         }
         return uuids;
 
@@ -138,13 +137,13 @@ public class Database {
             }
 
             long timeTaken = System.currentTimeMillis() - startTime;
-            Log.logln("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
+            Core.logger.debug("Database Pulled | Took " + timeTaken + "ms | Read " + records + " records.");
 
             rs = null;
             stmt.close();
             conn.close();
         } catch (SQLException e) {
-            Log.logln(e.getMessage());
+            Core.logger.error(e.getMessage());
         }
         return names;
 
@@ -165,12 +164,12 @@ public class Database {
                     stmt.execute(sql);
 
                     long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.logln("Database Added " + player.getName() + " | Took " + timeTaken + "ms");
+                    Core.logger.debug("Database Added " + player.getName() + " | Took " + timeTaken + "ms");
 
                     stmt.close();
                     conn.close();
                 } catch (SQLException e) {
-                    Log.logln(e.getMessage());
+                    Core.logger.error(e.getMessage());
                 }
             }
         }).start();
@@ -190,12 +189,12 @@ public class Database {
                     stmt.execute(sql);
 
                     long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.logln("Database Removed " + player.getName() + " | Took " + timeTaken + "ms");
+                    Core.logger.debug("Database Removed " + player.getName() + " | Took " + timeTaken + "ms");
 
                     stmt.close();
                     conn.close();
                 } catch (SQLException e) {
-                    Log.logln(e.getMessage());
+                    Core.logger.error(e.getMessage());
                 }
             }
         }).start();
@@ -230,25 +229,25 @@ public class Database {
                                 }
                             }
                         } else {
-                            Log.logln(rs.getString("uuid") + " is NOT whitelisted.");
+                            Core.logger.info(rs.getString("uuid") + " is NOT whitelisted.");
                             if (localUuids.contains(rs.getString("uuid"))) {
                                 server.getPlayerList().removePlayerFromWhitelist(player);
 
-                                Log.logln("Removed player " + rs.getString("name"));
+                                Core.logger.info("Removed player " + rs.getString("name"));
                             }
                         }
 
                         records++;
                     }
                     long timeTaken = System.currentTimeMillis() - startTime;
-                    Log.logln("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
-                    Log.logln("Local whitelist.json up to date!");
+                    Core.logger.debug("Database Pulled | Took " + timeTaken + "ms | Wrote " + records + " records.");
+                    Core.logger.debug("Local whitelist.json up to date!");
 
                     rs = null;
                     stmt.close();
                     conn.close();
                 } catch(SQLException e){
-                    Log.logln(e.getMessage());
+                    Core.logger.error(e.getMessage());
                 }
             }
         }).start();
@@ -264,10 +263,10 @@ public class Database {
             Connection conn = DriverManager.getConnection(url);
             if(conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                Log.logln("A new database \"" + ConfigHandler.databasePath +"\" has been created.");
+                Core.logger.info("A new database \"" + ConfigHandler.databasePath +"\" has been created.");
             }
         } catch (SQLException e) {
-            Log.logln(e.getMessage());
+            Core.logger.error(e.getMessage());
         }
     }
 }
