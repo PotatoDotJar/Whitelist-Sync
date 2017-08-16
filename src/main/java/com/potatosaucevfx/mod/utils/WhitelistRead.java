@@ -50,7 +50,8 @@ public class WhitelistRead {
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (ParseException e) {
-      e.printStackTrace();
+      Log.logln("Whitelist.json is empty! :O");
+      //e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

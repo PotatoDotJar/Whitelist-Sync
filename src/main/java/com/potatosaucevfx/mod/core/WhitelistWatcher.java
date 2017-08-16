@@ -63,8 +63,8 @@ public class WhitelistWatcher implements Runnable {
             WatchEvent.Kind<?> kind = event.kind();
 
             // Test if whitelist is changed
-            if(event.context().toString().equalsIgnoreCase(ConfigHandler.databasePath)) {
-              Log.logln("Database Updated... Syncing...");
+            if(event.context().toString().equalsIgnoreCase("whitelist.db")) {
+              Log.logln("Remote Database Updated... Syncing...");
               Database.updateLocalWithDatabase(server);
             }
           }
