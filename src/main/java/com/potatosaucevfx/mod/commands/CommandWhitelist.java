@@ -36,7 +36,7 @@ public class CommandWhitelist implements ICommand {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "wl <action>";
+        return "/wl <list|add|remove|reloadConfig|sync|copyServerToDatabase>";
     }
 
     @Override
