@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.io.File;
 
@@ -21,7 +23,7 @@ import java.io.File;
 public class Core {
 
     public static final String MODID = "wlsync";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "1.1";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
     public static String SERVER_FILEPATH = "";
     public static Configuration config;
@@ -43,6 +45,7 @@ public class Core {
 
     }
 
+    @SideOnly(Side.SERVER)
     @EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
         SERVER_FILEPATH = event.getServer().getDataDirectory().getAbsolutePath();
