@@ -26,16 +26,17 @@ public class CommandWhitelist implements ICommand {
     public CommandWhitelist() {
         aliases = new ArrayList();
         aliases.add("wl");
+        aliases.add("whitelistsync");
     }
 
     @Override
     public String getCommandName() {
-        return "whitelist";
+        return "wl";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "wl";
+        return "wl <action>";
     }
 
     @Override
