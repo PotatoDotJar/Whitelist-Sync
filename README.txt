@@ -1,3 +1,5 @@
+SEE https://minecraft.curseforge.com/projects/whitelist-sync
+
 Are you a server owner who is sick of adding individual players to each of your 100 forge servers? Wait you only have 2 forge servers? Well this mod can help you still!
 
  
