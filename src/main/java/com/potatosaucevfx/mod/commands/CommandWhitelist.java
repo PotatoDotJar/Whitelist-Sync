@@ -113,7 +113,15 @@ public class CommandWhitelist implements ICommand {
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
+        if(sender.canCommandSenderUseCommand(4, "wl")) {
+            return true;
+        }
+        else {
+            return false;
+        }
+
+
+
     }
 
     @Override
