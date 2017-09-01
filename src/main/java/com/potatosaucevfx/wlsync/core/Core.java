@@ -1,7 +1,7 @@
-package com.potatosaucevfx.mod.core;
+package com.potatosaucevfx.wlsync.core;
 
-import com.potatosaucevfx.mod.commands.CommandWhitelist;
-import com.potatosaucevfx.mod.utils.ConfigHandler;
+import com.potatosaucevfx.wlsync.utils.ConfigHandler;
+import com.potatosaucevfx.wlsync.commands.CommandWhitelist;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;

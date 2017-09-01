@@ -1,4 +1,4 @@
-package com.potatosaucevfx.mod.core;
+package com.potatosaucevfx.wlsync.core;
 
 public class WhitelistUser {
 

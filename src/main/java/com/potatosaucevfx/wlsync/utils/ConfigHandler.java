@@ -1,6 +1,6 @@
-package com.potatosaucevfx.mod.utils;
+package com.potatosaucevfx.wlsync.utils;
 
-import com.potatosaucevfx.mod.core.Core;
+import com.potatosaucevfx.wlsync.core.Core;
 import net.minecraftforge.common.config.Configuration;
 
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
