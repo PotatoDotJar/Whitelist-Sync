@@ -1,8 +1,8 @@
-package com.potatosaucevfx.mod.core;
+package com.potatosaucevfx.wlsync.core;
 
 import com.mojang.authlib.GameProfile;
-import com.potatosaucevfx.mod.utils.ConfigHandler;
-import com.potatosaucevfx.mod.utils.WhitelistRead;
+import com.potatosaucevfx.wlsync.utils.ConfigHandler;
+import com.potatosaucevfx.wlsync.utils.WhitelistRead;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.File;

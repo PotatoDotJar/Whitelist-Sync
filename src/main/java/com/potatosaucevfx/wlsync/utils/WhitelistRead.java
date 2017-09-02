@@ -1,7 +1,7 @@
-package com.potatosaucevfx.mod.utils;
+package com.potatosaucevfx.wlsync.utils;
 
-import com.potatosaucevfx.mod.core.Core;
-import com.potatosaucevfx.mod.core.WhitelistUser;
+import com.potatosaucevfx.wlsync.core.Core;
+import com.potatosaucevfx.wlsync.core.WhitelistUser;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;

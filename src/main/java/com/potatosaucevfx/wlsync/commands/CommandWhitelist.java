@@ -1,9 +1,9 @@
-package com.potatosaucevfx.mod.commands;
+package com.potatosaucevfx.wlsync.commands;
 
 import com.mojang.authlib.GameProfile;
-import com.potatosaucevfx.mod.core.Core;
-import com.potatosaucevfx.mod.core.Database;
-import com.potatosaucevfx.mod.utils.ConfigHandler;
+import com.potatosaucevfx.wlsync.core.Core;
+import com.potatosaucevfx.wlsync.core.Database;
+import com.potatosaucevfx.wlsync.utils.ConfigHandler;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
@@ -29,17 +29,17 @@ public class CommandWhitelist implements ICommand {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "wl";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "/wl <list|add|remove|reloadConfig|sync|copyServerToDatabase>";
     }
 
     @Override
-    public List<String> getCommandAliases() {
+    public List<String> getAliases() {
         return aliases;
     }
 
@@ -63,17 +63,17 @@ public class CommandWhitelist implements ICommand {
             if(args.length > 0) {
                 //Action for showing list
                 if (args[0].equalsIgnoreCase("list")) {
-                    Database.pullNamesFromDatabase(server).forEach(user -> sender.addChatMessage(new TextComponentString(user.toString())));
+                    Database.pullNamesFromDatabase(server).forEach(user -> sender.sendMessage(new TextComponentString(user.toString())));
                 }
                 // Actions for adding a player to whitelist
                 else if (args[0].equalsIgnoreCase("add")) {
                     if(args.length > 1) {
                         server.getPlayerList().addWhitelistedPlayer(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
                         Database.addPlayertoDataBase(server.getPlayerProfileCache().getGameProfileForUsername(args[1]));
-                        sender.addChatMessage(new TextComponentString(args[1] + " added to the whitelist."));
+                        sender.sendMessage(new TextComponentString(args[1] + " added to the whitelist."));
                     }
                     else {
-                        sender.addChatMessage(new TextComponentString("You must specify a name to add to the whitelist!"));
+                        sender.sendMessage(new TextComponentString("You must specify a name to add to the whitelist!"));
                     }
                 }
                 // Actions for removing player from whitelist
@@ -83,11 +83,11 @@ public class CommandWhitelist implements ICommand {
                         if(gameprofile != null) {
                             server.getPlayerList().removePlayerFromWhitelist(gameprofile);
                             Database.removePlayerFromDataBase(gameprofile);
-                            sender.addChatMessage(new TextComponentString(args[1] + " removed from the whitelist."));
+                            sender.sendMessage(new TextComponentString(args[1] + " removed from the whitelist."));
 
                         }
                         else {
-                            sender.addChatMessage(new TextComponentString("You must specify a valid name to remove from the whitelist!"));
+                            sender.sendMessage(new TextComponentString("You must specify a valid name to remove from the whitelist!"));
                         }
                     }
                 }
@@ -106,14 +106,14 @@ public class CommandWhitelist implements ICommand {
                 }
             }
             else {
-                sender.addChatMessage(new TextComponentString("You must provide parameters!"));
+                sender.sendMessage(new TextComponentString("You must provide parameters!"));
             }
         }
     }
 
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        if(sender.canCommandSenderUseCommand(4, "wl")) {
+        if(sender.canUseCommand(4, "wl")) {
             return true;
         }
         else {
@@ -125,7 +125,7 @@ public class CommandWhitelist implements ICommand {
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos) {
         if (args.length == 1) {
             return CommandBase.getListOfStringsMatchingLastWord(args, "list", "add", "remove", "reloadConfig", "sync", "copyServerToDatabase");
         } else {

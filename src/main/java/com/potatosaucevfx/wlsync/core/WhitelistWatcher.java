@@ -1,13 +1,12 @@
-package com.potatosaucevfx.mod.core;
+package com.potatosaucevfx.wlsync.core;
 
-import com.potatosaucevfx.mod.utils.ConfigHandler;
+import com.potatosaucevfx.wlsync.utils.ConfigHandler;
 import net.minecraft.server.MinecraftServer;
 
 import java.io.IOException;
 import java.nio.file.*;
 
 import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-import static java.nio.file.StandardWatchEventKinds.OVERFLOW;
 
 public class WhitelistWatcher implements Runnable {
 
