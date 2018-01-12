@@ -2,7 +2,7 @@
 {
   "modid": "wlsync",
   "name": "Whitelist Sync",
-  "description": "Server Side Mod to Sync Whitelists to a mySQL Database.",
+  "description": "Server Side Mod to Sync Whitelists to a Database.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "https://github.com/PotatoSauceVFX/Whitelist-Sync",

@@ -19,12 +19,11 @@ import java.io.File;
 /**
  * Created by PotatoSauceVFX on 7/27/2017.
  */
-
 @Mod(modid = Core.MODID, version = Core.VERSION, acceptableRemoteVersions = "*", serverSideOnly = true)
 public class Core {
 
     public static final String MODID = "wlsync";
-    public static final String VERSION = "2.0";
+    public static final String VERSION = "3.0";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
     public static String SERVER_FILEPATH = "";
     public static Configuration config;
@@ -37,8 +36,6 @@ public class Core {
         config = new Configuration(new File(directory.getPath(), MODID + ".cfg"));
         ConfigHandler.readConfig();
     }
-
-
 
     @EventHandler
     public void init(FMLInitializationEvent event) {
@@ -59,7 +56,7 @@ public class Core {
         event.registerServerCommand(new CommandWhitelist());
         Database.updateLocalWithDatabase(event.getServer());
 
-        if(!event.getServer().getPlayerList().isWhiteListEnabled()) {
+        if (!event.getServer().getPlayerList().isWhiteListEnabled()) {
             event.getServer().getPlayerList().setWhiteListEnabled(true);
             Core.logger.info("Whitelist not enabled, doing it for you! ;)");
         }
