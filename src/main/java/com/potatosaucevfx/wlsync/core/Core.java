@@ -1,6 +1,8 @@
 package com.potatosaucevfx.wlsync.core;
 
+import com.potatosaucevfx.wlsync.service.SQLiteService;
 import com.potatosaucevfx.wlsync.commands.CommandWhitelist;
+import com.potatosaucevfx.wlsync.service.JDBCService;
 import com.potatosaucevfx.wlsync.utils.ConfigHandler;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -13,25 +15,39 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.sqlite.JDBC;
 
 import java.io.File;
+import java.sql.DriverManager;
 
 /**
- * Created by PotatoSauceVFX on 7/27/2017.
+ *
+ * @author PotatoSauceVFX <rj@potatosaucevfx.com>
  */
 @Mod(modid = Core.MODID, version = Core.VERSION, acceptableRemoteVersions = "*", serverSideOnly = true)
 public class Core {
 
     public static final String MODID = "wlsync";
-    public static final String VERSION = "3.0";
+    public static final String VERSION = "3.1";
     public static final String LOG_PREFIX = "[Whitelist Sync " + VERSION + "] ";
     public static String SERVER_FILEPATH = "";
     public static Configuration config;
+
+    // Services
+    public JDBCService jDBCService;
+    public SQLiteService sQliteService;
 
     public static final Logger logger = LogManager.getLogger(MODID);
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent e) {
+
+        try {
+            DriverManager.registerDriver(new JDBC());
+        } catch (Exception ee) {
+            ee.printStackTrace();
+        }
+
         File directory = e.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), MODID + ".cfg"));
         ConfigHandler.readConfig();
@@ -41,7 +57,14 @@ public class Core {
     public void init(FMLInitializationEvent event) {
 
         logger.info("[Whitelist Sync] Hello Minecraft!!!");
-        Database.setupDatabase();
+
+        if (ConfigHandler.whitelistMode.equalsIgnoreCase("SQLITE")) {
+            sQliteService = new SQLiteService();
+            sQliteService.setupDatabase();
+        } else if (ConfigHandler.whitelistMode.equalsIgnoreCase("MYSQL")) {
+            jDBCService = new JDBCService();
+            jDBCService.setupDatabase();
+        }
 
     }
 
@@ -53,17 +76,23 @@ public class Core {
         logger.info("------------------------------------------------");
         logger.info("------------------------------------------------");
         logger.info("Loading Commands");
-        event.registerServerCommand(new CommandWhitelist());
-        Database.updateLocalWithDatabase(event.getServer());
+        event.registerServerCommand(new CommandWhitelist(this));
+
+        if (ConfigHandler.whitelistMode.equalsIgnoreCase("SQLITE")) {
+            sQliteService.updateLocalWithDatabase(event.getServer());
+
+            // Thread to update local files with database.
+            Thread t = new Thread(new WhitelistWatcher(event.getServer(), this));
+            t.start();
+        } else if (ConfigHandler.whitelistMode.equalsIgnoreCase("MYSQL")) {
+            // TODO: MYSQL
+        }
 
         if (!event.getServer().getPlayerList().isWhiteListEnabled()) {
             event.getServer().getPlayerList().setWhiteListEnabled(true);
             Core.logger.info("Whitelist not enabled, doing it for you! ;)");
         }
 
-        // Thread to update local files with database.
-        Thread t = new Thread(new WhitelistWatcher(event.getServer()));
-        t.start();
         logger.info("------------------------------------------------");
         logger.info("------------------------------------------------");
         logger.info("------------------------------------------------");

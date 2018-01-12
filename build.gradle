@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "2.0"
+version = "3.1"
 group= "com.potatosaucevfx.wlsync" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "wlsync"
 
@@ -33,6 +33,12 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+//Add "embedded" configuration
+configurations {
+    embed
+    compile.extendsFrom(embed)
+}
+
 dependencies {
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -40,28 +46,18 @@ dependencies {
     //compile "some.group:artifact:version"
 
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
-    compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile 'com.googlecode.json-simple:json-simple:1.1.1'
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.21.0.1'
-
-
-    // real examples
-    //compile 'com.wlsync-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.wlsync-buildcraft:buildcraft:6.0.8:dev'
-
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.wlsync-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.wlsync-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile 'mysql:mysql-connector-java:6.0.6'
 }
+
+//Add dependencies to the JAR
+jar {
+    from configurations.embed.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
 
 processResources {
     // this will ensure that this task is redone when the versions change.

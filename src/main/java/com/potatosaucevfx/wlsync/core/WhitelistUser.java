@@ -1,25 +1,29 @@
 package com.potatosaucevfx.wlsync.core;
 
+/**
+ *
+ * @author PotatoSauceVFX <rj@potatosaucevfx.com>
+ */
 public class WhitelistUser {
 
-  private final String uuid;
-  private final String name;
+    private final String uuid;
+    private final String name;
 
-  public WhitelistUser(String uuid, String name) {
-    this.uuid = uuid;
-    this.name = name;
-  }
+    public WhitelistUser(String uuid, String name) {
+        this.uuid = uuid;
+        this.name = name;
+    }
 
-  public String getName() {
-    return name;
-  }
+    public String getName() {
+        return name;
+    }
 
-  public String getUuid() {
-    return uuid;
-  }
+    public String getUuid() {
+        return uuid;
+    }
 
-  public String toString() {
-    return this.uuid + ":" + this.name;
-  }
+    public String toString() {
+        return this.uuid + ":" + this.name;
+    }
 
 }

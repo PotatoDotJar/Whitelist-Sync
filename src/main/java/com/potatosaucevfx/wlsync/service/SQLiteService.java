@@ -1,6 +1,7 @@
-package com.potatosaucevfx.wlsync.core;
+package com.potatosaucevfx.wlsync.service;
 
 import com.mojang.authlib.GameProfile;
+import com.potatosaucevfx.wlsync.core.Core;
 import com.potatosaucevfx.wlsync.utils.ConfigHandler;
 import com.potatosaucevfx.wlsync.utils.WhitelistRead;
 import net.minecraft.server.MinecraftServer;
@@ -10,13 +11,22 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class Database {
+/**
+ *
+ * @author PotatoSauceVFX <rj@potatosaucevfx.com>
+ */
+public class SQLiteService {
 
-    public static void setupDatabase() {
-        Connection conn = null;
-        File database = new File(ConfigHandler.databasePath);
+    Connection conn = null;
+    File database;
 
-        if(!database.exists()) {
+    public SQLiteService() {
+        database = new File(ConfigHandler.databasePath);
+    }
+
+    public void setupDatabase() {
+
+        if (!database.exists()) {
             createNewDatabase();
         }
         try {
@@ -45,9 +55,8 @@ public class Database {
         }
     }
 
-
     // Writes data from local whitelist to database.
-    public static void pushLocalToDatabase(MinecraftServer server) {
+    public void pushLocalToDatabase(MinecraftServer server) {
         ArrayList<String> uuids = WhitelistRead.getWhitelistUUIDs();
         ArrayList<String> names = WhitelistRead.getWhitelistNames();
 
@@ -60,8 +69,8 @@ public class Database {
                     Statement stmt = conn.createStatement();
                     long startTime = System.currentTimeMillis();
 
-                    for(int i = 0; i < uuids.size() || i < names.size(); i++) {
-                        if((uuids.get(i) != null) && (names.get(i) != null)) {
+                    for (int i = 0; i < uuids.size() || i < names.size(); i++) {
+                        if ((uuids.get(i) != null) && (names.get(i) != null)) {
                             String sql = "INSERT OR REPLACE INTO whitelist(uuid, name, whitelisted) VALUES (\'" + uuids.get(i) + "\', \'" + names.get(i) + "\', 1);";
                             stmt.execute(sql);
                             records++;
@@ -70,7 +79,6 @@ public class Database {
                     long timeTaken = System.currentTimeMillis() - startTime;
 
                     Core.logger.debug("Database Updated | Took " + timeTaken + "ms | Wrote " + records + " records.");
-
 
                     stmt.close();
                     conn.close();
@@ -81,7 +89,8 @@ public class Database {
             }
         }).start();
     }
-    public static ArrayList<String> pullUuidsFromDatabase(MinecraftServer server) {
+
+    public ArrayList<String> pullUuidsFromDatabase(MinecraftServer server) {
         ArrayList<String> uuids = new ArrayList<String>();
 
         try {
@@ -95,8 +104,8 @@ public class Database {
             stmt.execute(sql);
             ResultSet rs = stmt.executeQuery(sql);
 
-            while(rs.next()) {
-                if(rs.getInt("whitelisted") == 1) {
+            while (rs.next()) {
+                if (rs.getInt("whitelisted") == 1) {
                     uuids.add(rs.getString("uuid"));
                 }
                 records++;
@@ -114,7 +123,7 @@ public class Database {
 
     }
 
-    public static ArrayList<String> pullNamesFromDatabase(MinecraftServer server) {
+    public ArrayList<String> pullNamesFromDatabase(MinecraftServer server) {
         ArrayList<String> names = new ArrayList<String>();
         try {
             int records = 0;
@@ -127,9 +136,9 @@ public class Database {
             stmt.execute(sql);
             ResultSet rs = stmt.executeQuery(sql);
 
-            while(rs.next()) {
+            while (rs.next()) {
 
-                if(rs.getInt("whitelisted") == 1) {
+                if (rs.getInt("whitelisted") == 1) {
                     names.add(rs.getString("name"));
                 }
 
@@ -149,8 +158,7 @@ public class Database {
 
     }
 
-
-    public static void addPlayertoDataBase(GameProfile player) {
+    public void addPlayertoDataBase(GameProfile player) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -175,7 +183,7 @@ public class Database {
         }).start();
     }
 
-    public static void removePlayerFromDataBase(GameProfile player) {
+    public void removePlayerFromDataBase(GameProfile player) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -200,7 +208,7 @@ public class Database {
         }).start();
     }
 
-    public static void updateLocalWithDatabase(MinecraftServer server) {
+    public void updateLocalWithDatabase(MinecraftServer server) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -246,24 +254,20 @@ public class Database {
                     rs = null;
                     stmt.close();
                     conn.close();
-                } catch(SQLException e){
+                } catch (SQLException e) {
                     Core.logger.error(e.getMessage());
                 }
             }
         }).start();
 
-
-
     }
 
-
-    private static void createNewDatabase() {
+    private void createNewDatabase() {
         String url = "jdbc:sqlite:" + ConfigHandler.databasePath;
         try {
             Connection conn = DriverManager.getConnection(url);
-            if(conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                Core.logger.info("A new database \"" + ConfigHandler.databasePath +"\" has been created.");
+            if (conn != null) {
+                Core.logger.info("A new database \"" + ConfigHandler.databasePath + "\" has been created.");
             }
         } catch (SQLException e) {
             Core.logger.error(e.getMessage());
